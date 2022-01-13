@@ -2,21 +2,23 @@ package com.company;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import static com.company.Login.userEmail;
 import static com.company.Main.*;
 
 import static com.company.Book.books;
 
-public class Member {
+public class Borrower {
     public static File borrowInfo = new File("borrowingInformation.txt");
-    private static ArrayList<Member> borrowerList = new ArrayList<>();
+    private static ArrayList<Borrower> borrowerList = new ArrayList<>();
     private static ArrayList<Book> borrowedBooks = new ArrayList<>();
-    private final String dateBorrowed; //  dd/mm/yy
-    private final String borrowerEmail;// will be taken and verified from the LoginDetails file in main
+    private String dateBorrowed; //  dd/mm/yy
+    private String borrowerEmail;// will be taken and verified from the LoginDetails file in main
 
-    public Member(String dateBorrowed, String borrowerEmail) {
+    public Borrower(String dateBorrowed, String borrowerEmail) {
         this.dateBorrowed = dateBorrowed;
         this.borrowerEmail = borrowerEmail;
     }
@@ -27,7 +29,7 @@ public class Member {
             System.out.println("You have already reached the maximum number of books borrowed.");
             return;
         }
-        Member currentBorrower = new Member(dateFormatter(), userEmail);
+        Borrower currentBorrower = new Borrower(dateFormatter(), userEmail);
         try {
             System.out.println("__________________________________________________________________");
             int noOfBooks;
@@ -50,7 +52,7 @@ public class Member {
             borrowerList.add(currentBorrower);
             appendBorrowInfo();
         } catch (Exception e) {
-            System.out.println("An error has occurred");
+            System.out.println(e);
         }
 
 
@@ -72,7 +74,7 @@ public class Member {
     //searches the text file to see if the email holder has any books currently. If so, it makes sure it is < 3
     private static int borrowLimitChecker(String email) {
         int count = 0;
-        for (Member borrower : borrowerList) {
+        for (Borrower borrower : borrowerList) {
             if ((borrower.getBorrowerEmail()).equalsIgnoreCase(email)) {
                 count++;
             }
@@ -88,15 +90,15 @@ public class Member {
             boolean validBook = false;
             while (!validBook) {
                 String borrowedBookName = input("What is the book title?").toLowerCase();
-                for (Member member : borrowerList) {
-                    if (member.getBorrowerEmail().equals(userEmail)) {
+                for (Borrower borrower : borrowerList) {
+                    if (borrower.getBorrowerEmail().equals(userEmail)) {
                         validMember = true;
-                        Book currentBook = borrowedBooks.get(borrowerList.indexOf(member));
+                        Book currentBook = borrowedBooks.get(borrowerList.indexOf(borrower));
                         if (currentBook.getTitle().contains(borrowedBookName)) {
                             validBook = true;
                             books.add(currentBook);
                             borrowedBooks.remove(currentBook);
-                            borrowerList.remove(member);
+                            borrowerList.remove(borrower);
                             System.out.println("Successfully returned book.");
                         }
                     }
@@ -111,8 +113,8 @@ public class Member {
                     }
                 }
             }
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("An error has occured");
+        } catch (Exception e) {
+            System.out.println(e);
         }
         Book.appendFile();
         appendBorrowInfo();
@@ -125,8 +127,8 @@ public class Member {
             while (fileInput.hasNextLine()) {
                 String data = fileInput.nextLine().toLowerCase();
                 String[] borrowInformation = data.split("%"); //There are four different types of information we have stored about the book
-                Member currentBorrower = new Member(borrowInformation[0], borrowInformation[1]);
-                String[] bookInfo = borrowInformation[3].split(", ");
+                Borrower currentBorrower = new Borrower(borrowInformation[0], borrowInformation[1]);
+                String[] bookInfo = borrowInformation[2].split(", ");
                 Book currentBook = new Book(bookInfo[0], Integer.parseInt(bookInfo[1]), bookInfo[2], bookInfo[3]);
                 borrowedBooks.add(currentBook);
                 borrowerList.add(currentBorrower);
@@ -138,10 +140,10 @@ public class Member {
 
     public static void createBorrowInfoFile() {
         try {
-            if (loginDetails.createNewFile()) {
+            if (borrowInfo.createNewFile()) {
                 System.out.println("Setting up borrowing system.");
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("An error has occurred.");
         }
     }
@@ -152,15 +154,14 @@ public class Member {
             FileWriter fileEdit = new FileWriter(borrowInfo.getName(), false); //appends file (change to 'false' to overwrite file)
             StringBuilder borrowerDetails = new StringBuilder();
             for (int i = 0; i < borrowedBooks.size(); i++) {
-                borrowerDetails.append(borrowerList.get(i)).append("%").append(borrowedBooks.get(i)).append("\n");
+                borrowerDetails.append(borrowerList.get(i)).append(borrowedBooks.get(i)).append("\n");
             }
             fileEdit.write(borrowerDetails.toString());
             fileEdit.close();
             System.out.println("Successfully altered borrower list.");
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("An error has occurred");
         }
-
     }
 
     public static void borrowFilePrint() {
@@ -183,6 +184,6 @@ public class Member {
 
     private String fancyToString() {
         return "Date Borrowed = " + dateBorrowed
-                + "\nMember Email = " + borrowerEmail;
+                + "\nBorrower Email = " + borrowerEmail;
     }
 }

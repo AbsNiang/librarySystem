@@ -1,4 +1,4 @@
-an210774@reigate.ac.uk%Password123
-an200123@reigate.ac.uk%Password321
-testemail@gmail.com%Password1
-testemail1@hotmail.com%Testpass007
+an210774@reigate.ac.uk, Password123
+an200123@reigate.ac.uk, Password321
+testemail@gmail.com, Password1
+testemail1@hotmail.com, Testpass007

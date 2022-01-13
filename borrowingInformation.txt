@@ -1,3 +1,4 @@
-12/01/2022%testemail@gmail.com%%fantastic mr fox, 111111121, roald dahl, comedy
-12/01/2022%libraryadmin123@reigate.ac.uk%%billionaire boy, 111111112, david walliams, comedy
-12/01/2022%testemail1@hotmail.com%%diary of a wimpy kid, 999999332, jeoff, comedy
+12/01/2022%libraryadmin123@reigate.ac.uk%billionaire boy, 111111112, david walliams, comedy
+12/01/2022%testemail1@hotmail.com%diary of a wimpy kid, 999999332, jeoff, comedy
+13/01/2022%testemail@gmail.com%fantastic mr fox, 111111121, roald dahl, comedy
+11/01/2022%testemail@gmail.com%algorithms to live by, 987000734, brian christian, non fiction
