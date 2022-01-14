@@ -1,23 +1,21 @@
 package com.company;
 
-import java.io.File;
-import java.util.Scanner;
+import com.company.libraryFunctions.BookFunctions;
+import com.company.libraryFunctions.Borrowing;
+import com.company.libraryFunctions.FileHandling;
+import com.company.libraryFunctions.Login;
+import com.company.objects.Book;
+import static com.company.libraryFunctions.GetInput.input;
+import static com.company.libraryFunctions.FileHandling.deleteFile;
 
 public class Main {
 
     //create Borrow.bookReturn and then upload to GitHub
     public static void main(String[] args) {
-        Login.createLoginFile();//sets up the log in file
+        FileHandling.createFile(FileHandling.bookLibrary);//sets up the log in file
         Book.bookInitializer();//sets up the array of Book objects
-        Borrower.borrowInfoInitializer();//sets up the array of Borrower objects
+        Borrowing.borrowInfoInitializer();//sets up the array of Borrower objects
         defaultMenu();
-    }
-
-    //method which takes input to avoid having to declare a new 'Scanner' object in each method
-    public static String input(String prompt) {
-        System.out.println(prompt);
-        Scanner input = new Scanner(System.in);
-        return input.nextLine();
     }
 
     private static void defaultMenu() {
@@ -30,18 +28,18 @@ public class Main {
                     "\n -'borrow'; borrow up to three books" +
                     "\n -'return'; return a book you have previously borrowed").toLowerCase()) {
                 case "view":
-                    Book.libraryFilePrint();
+                    FileHandling.libraryFilePrint();
                     break;
                 case "search":
-                    Book.searchForBook();
+                    BookFunctions.searchForBook();
                     break;
                 case "borrow":
-                    Borrower.borrowFilePrint();
-                    Borrower.bookBorrow();
+                    Borrowing.borrowFilePrint();
+                    Borrowing.bookBorrow();
                     break;
                 case "return":
-                    Borrower.borrowFilePrint();
-                    Borrower.bookReturn();
+                    Borrowing.borrowFilePrint();
+                    Borrowing.bookReturn();
                     break;
                 default:
                     System.out.println("You have not selected a valid option");
@@ -78,21 +76,21 @@ public class Main {
                     case "reset":
                         String fileToReset = input("What file would you like to reset?" + "\n 'library' or 'login' or 'borrow'").toLowerCase();
                         if (fileToReset.equals("library")) {
-                            deleteFile(Book.bookLibrary);
+                            deleteFile(FileHandling.bookLibrary);
                         } else if (fileToReset.equals("login")) {
-                            deleteFile(Login.loginDetails);
+                            deleteFile(FileHandling.loginDetails);
                         } else {
-                            deleteFile(Borrower.borrowInfo);
+                            deleteFile(FileHandling.borrowInfo);
                         }
                         break;
                     case "add":
-                        Book.add();
+                        BookFunctions.add();
                         break;
                     case "delete":
-                        Book.remove(input("What is the book title?"));
+                        BookFunctions.remove(input("What is the book title?"));
                         break;
                     case "edit":
-                        Book.edit();
+                        BookFunctions.edit();
                         break;
                     case "close":
                         closeInterface = true;
@@ -101,13 +99,6 @@ public class Main {
                         System.out.println("You have not selected a valid option");
                 }
             }
-            Book.createLibraryFile();
-        }
-    }
-
-    public static void deleteFile(File fileName) {
-        if (fileName.delete()) {
-            System.out.println("The file has been reset.");
         }
     }
 }

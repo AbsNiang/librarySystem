@@ -1,46 +1,16 @@
-package com.company;
+package com.company.libraryFunctions;
 
-import java.io.File;
+import com.company.objects.Book;
+
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Scanner;
 
-import static com.company.Main.*;
+import static com.company.libraryFunctions.FileHandling.bookLibrary;
+import static com.company.libraryFunctions.GetInput.input;
+import static com.company.objects.Book.books;
 
-public class Book {
-    public static File bookLibrary = new File("BookInformation.txt");
-    public static ArrayList<Book> books = new ArrayList<>();
-    private String title;
-    private int ISBN;
-    private String author;
-    private String genre;
-
-    public Book(String title, int ISBN, String author, String genre) {
-        this.title = title;
-        this.ISBN = ISBN;
-        this.author = author;
-        this.genre = genre;
-
-    }
-
-    //method which adds a stated amount of books to the book library file
-    public static void add() {
-        int numbOfBooks;
-        while (true) {
-            try {
-                numbOfBooks = Integer.parseInt(input("How many books will there be?"));
-                break;
-            } catch (NumberFormatException e) {
-                System.out.println("You have not typed an integer");
-            }
-        }
-        for (int i = 0; i < numbOfBooks; i++) {
-            books.add(bookSetup());
-        }
-
-        appendFile();
-    }
+public class BookFunctions {
 
     //creates a Book object and uses the toString method to turn it into the format used in the BookInfo. file
     private static Book bookSetup() {
@@ -59,6 +29,24 @@ public class Book {
         }
     }
 
+    //method which adds a stated amount of books to the book library file
+    public static void add() {
+        int numbOfBooks;
+        while (true) {
+            try {
+                numbOfBooks = Integer.parseInt(input("How many books will there be?"));
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("You have not typed an integer");
+            }
+        }
+        for (int i = 0; i < numbOfBooks; i++) {
+            books.add(bookSetup());
+        }
+        FileHandling.bookAppendFile();
+    }
+
+    //removes a single 'Book' from the books ArrayList
     public static void remove(String title) {
         boolean bookFound = false;
         StringBuilder newLibrary = new StringBuilder();
@@ -98,7 +86,7 @@ public class Book {
             count++;
         }
         if (bookFound) {
-            Main.deleteFile(bookLibrary);
+            FileHandling.deleteFile(bookLibrary);
             try {
                 FileWriter fileEdit = new FileWriter(bookLibrary.getName(), false); //appends file (change to 'false' to overwrite file)
                 fileEdit.write(String.valueOf(newLibrary));
@@ -106,48 +94,6 @@ public class Book {
             } catch (IOException e) {
                 System.out.println("An error has occurred");
             }
-        }
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public int getISBN() {
-        return ISBN;
-    }
-
-    public void setISBN(int ISBN) {
-        this.ISBN = ISBN;
-    }
-
-    public static boolean ISBNCheck(int ISBN) { //each book needs to have a unique ISBN and be 9 digits
-        try {
-            Scanner fileInput = new Scanner(bookLibrary); //searches file line by line for the book title
-            while (fileInput.hasNextLine()) {
-                String data = fileInput.nextLine().toLowerCase();
-                String[] bookInformation = data.split(", ");
-                if (Integer.parseInt(bookInformation[1]) == (ISBN)) { // ISBN location in array is '1'
-                    System.out.println("A book with this ISBN has already been registered.");
-                    System.out.println("    Book Title: " + bookInformation[0]);
-                    System.out.println("    ISBN: " + bookInformation[1]);
-                    System.out.println("    Author: " + bookInformation[2]);
-                    System.out.println("    Genre: " + bookInformation[3]);
-                    return false;
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("An error has occurred");
-        }
-        if (String.valueOf(ISBN).length() == 9) {
-            return true;
-        } else {
-            System.out.println("The ISBN is not an adequate length.");
-            return false;
         }
     }
 
@@ -196,6 +142,8 @@ public class Book {
         }
     }
 
+
+    //searches for a 'Book'
     public static void searchForBook() {
         switch (input("What would you like to search for the book by?" + "\nYou can search through the: " +
                 "\n -'Title'" + "\n -'ISBN'" + "\n -'Author'" + "\n -'Genre'").toLowerCase()) {
@@ -264,66 +212,29 @@ public class Book {
         return bookCharacteristic;
     }
 
-    public static void libraryFilePrint() {
-        for (Book book : books) {
-            System.out.println(book.fancyToString());
-        }
-    }
-
-    public static void appendFile() {
+    public static boolean ISBNCheck(int ISBN) { //each book needs to have a unique ISBN and be 9 digits
         try {
-            FileWriter fileEdit = new FileWriter(bookLibrary.getName(), false); //appends file (change to 'false' to overwrite file)
-            StringBuilder entireLibrary = new StringBuilder();
-            for (Book book : books) {
-                entireLibrary.append(book.toString()).append("\n");
-            }
-            fileEdit.write(entireLibrary.toString());
-            fileEdit.close();
-            System.out.println("Successfully saved books.");
-        } catch (IOException e) {
-            System.out.println("An error has occurred");
-        }
-    }
-
-    public static void bookInitializer() {
-        try {
-            Scanner fileInput = new Scanner(bookLibrary);
+            Scanner fileInput = new Scanner(bookLibrary); //searches file line by line for the book title
             while (fileInput.hasNextLine()) {
                 String data = fileInput.nextLine().toLowerCase();
-                String[] bookInformation = data.split(", "); //There are four different types of information we have stored about the book
-                Book lineBook = new Book(bookInformation[0], Integer.parseInt(bookInformation[1]), bookInformation[2], bookInformation[3]);
-                books.add(lineBook);
+                String[] bookInformation = data.split(", ");
+                if (Integer.parseInt(bookInformation[1]) == (ISBN)) { // ISBN location in array is '1'
+                    System.out.println("A book with this ISBN has already been registered.");
+                    System.out.println("    Book Title: " + bookInformation[0]);
+                    System.out.println("    ISBN: " + bookInformation[1]);
+                    System.out.println("    Author: " + bookInformation[2]);
+                    System.out.println("    Genre: " + bookInformation[3]);
+                    return false;
+                }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("An error has occurred");
         }
-    }
-
-    public static void createLibraryFile() {
-        try {
-            if (bookLibrary.createNewFile()) {
-                System.out.println("The file '" + bookLibrary.getName() + "' has been created.");
-            }
-        } catch (IOException e) {
-            System.out.println("An error has occurred");
+        if (String.valueOf(ISBN).length() == 9) {
+            return true;
+        } else {
+            System.out.println("The ISBN is not an adequate length.");
+            return false;
         }
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    @Override
-    public String toString() {
-        return title + ", " + ISBN + ", " + author + ", " + genre;
-    }
-
-    public String fancyToString() {
-        return "title= " + title + '\n' + "  ISBN= " + ISBN + "\n" + "  author= " + author + '\n' + "  genre= " + genre + '\n';
     }
 }

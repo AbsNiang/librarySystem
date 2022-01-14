@@ -1,27 +1,22 @@
-package com.company;
+package com.company.libraryFunctions;
 
-import java.io.File;
+import com.company.objects.Book;
+import com.company.objects.Borrower;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import static com.company.Login.userEmail;
-import static com.company.Main.*;
+import static com.company.libraryFunctions.FileHandling.borrowInfo;
+import static com.company.libraryFunctions.GetInput.input;
+import static com.company.libraryFunctions.Login.userEmail;
+import static com.company.objects.Book.books;
 
-import static com.company.Book.books;
+public class Borrowing {
 
-public class Borrower {
-    public static File borrowInfo = new File("borrowingInformation.txt");
     private static ArrayList<Borrower> borrowerList = new ArrayList<>();
     private static ArrayList<Book> borrowedBooks = new ArrayList<>();
-    private String dateBorrowed; //  dd/mm/yy
-    private String borrowerEmail;// will be taken and verified from the LoginDetails file in main
-
-    public Borrower(String dateBorrowed, String borrowerEmail) {
-        this.dateBorrowed = dateBorrowed;
-        this.borrowerEmail = borrowerEmail;
-    }
 
     public static void bookBorrow() {
         int noOfBorrows = borrowLimitChecker(userEmail);
@@ -39,20 +34,20 @@ public class Borrower {
                         "\nYou must not have over 3 books loaned at once"));
                 totalBooksLoaned = noOfBooks + noOfBorrows;
                 System.out.println("You will have " + totalBooksLoaned + " books loaned.");
-            } while (totalBooksLoaned > 3);
+            } while (totalBooksLoaned > 3); //Max book loaned by one person at once is 3 books
             for (int i = 0; i < noOfBooks; i++) {
                 String bookTitle = input("What is the name of the book?").toLowerCase();
                 for (Book book : books) {
                     if (book.getTitle().equals(bookTitle)) {
                         borrowedBooks.add(book);
-                        Book.remove(bookTitle);
+                        BookFunctions.remove(bookTitle);
                     }
                 }
             }
             borrowerList.add(currentBorrower);
             appendBorrowInfo();
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("An error has occurred" + e);
         }
 
 
@@ -114,15 +109,15 @@ public class Borrower {
                 }
             }
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("An error has occurred." + e);
         }
-        Book.appendFile();
+        FileHandling.bookAppendFile();
         appendBorrowInfo();
     }
 
     public static void borrowInfoInitializer() {
         try {
-            createBorrowInfoFile();
+            FileHandling.createFile(borrowInfo);
             Scanner fileInput = new Scanner(borrowInfo);
             while (fileInput.hasNextLine()) {
                 String data = fileInput.nextLine().toLowerCase();
@@ -135,16 +130,6 @@ public class Borrower {
             }
         } catch (Exception e) {
             System.out.println("An error has occurred");
-        }
-    }
-
-    public static void createBorrowInfoFile() {
-        try {
-            if (borrowInfo.createNewFile()) {
-                System.out.println("Setting up borrowing system.");
-            }
-        } catch (IOException e) {
-            System.out.println("An error has occurred.");
         }
     }
 
@@ -170,20 +155,5 @@ public class Borrower {
                 System.out.println(borrowerList.get(i).fancyToString() + "\nBook Borrowed: \n" + borrowedBooks.get(i).fancyToString());
             }
         }
-    }
-
-    private String getBorrowerEmail() {
-        return borrowerEmail;
-    }
-
-
-    @Override
-    public String toString() {
-        return dateBorrowed + "%" + borrowerEmail + "%";
-    }
-
-    private String fancyToString() {
-        return "Date Borrowed = " + dateBorrowed
-                + "\nBorrower Email = " + borrowerEmail;
     }
 }

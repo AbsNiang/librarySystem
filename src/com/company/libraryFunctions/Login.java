@@ -1,14 +1,12 @@
-package com.company;
+package com.company.libraryFunctions;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-import static com.company.Main.input;
+import static com.company.libraryFunctions.GetInput.input;
+import static com.company.libraryFunctions.FileHandling.loginDetails;
 
 public class Login {
-    public static File loginDetails = new File("LoginInformation.txt");
     public static String userEmail;
 
     //method which allows the user to either register a new account or log into a previously existing account
@@ -30,31 +28,6 @@ public class Login {
             }
         }
         return adminCheck;
-    }
-
-    public static void createLoginFile() {
-        try {
-            if (loginDetails.createNewFile()) {
-                System.out.println("Setting up login system.");
-            } else {
-                System.out.println("Login System is set up.");
-            }
-        } catch (IOException e) {
-            System.out.println("An error has occurred.");
-        }
-    }
-
-    //appends the login file
-    private static void appendLoginFile(String accountDetails) {
-        try {
-            FileWriter fileEdit = new FileWriter(loginDetails.getName(), true); //appends file (change to 'false' to overwrite file)
-            fileEdit.write(accountDetails);
-            fileEdit.close();
-            System.out.println("Successfully registered into the library.");
-        } catch (IOException e) {
-            System.out.println("An error has occurred");
-        }
-
     }
 
     //checks if the user has an account and signs them in
@@ -116,7 +89,7 @@ public class Login {
         }
         String password = passwordSecurity();
         accountDetails = (username.toLowerCase() + ", " + password + "\n");// email addresses aren't case sensitive
-        appendLoginFile(accountDetails);
+        FileHandling.appendLoginFile(accountDetails);
     }
 
     private static String passwordSecurity() {
