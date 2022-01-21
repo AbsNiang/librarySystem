@@ -8,7 +8,7 @@ import com.company.objects.Book;
 import static com.company.libraryFunctions.GetInput.input;
 import static com.company.libraryFunctions.FileHandling.deleteFile;
 
-public class Main {
+public class Main {// admin email is libraryadmin123@reigate.ac.uk and password is Admin1
 
     //create Borrow.bookReturn and then upload to GitHub
     public static void main(String[] args) {

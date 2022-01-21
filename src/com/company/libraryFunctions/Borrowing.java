@@ -152,6 +152,7 @@ public class Borrowing {
     public static void borrowFilePrint() {
         if (input("Would you like to see the list of current book loans?").toLowerCase().contains("y")) {
             for (int i = 0; i < borrowerList.size(); i++) {
+                System.out.println("__________________________________________________________________");
                 System.out.println(borrowerList.get(i).fancyToString() + "\nBook Borrowed: \n" + borrowedBooks.get(i).fancyToString());
             }
         }
